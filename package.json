@@ -20,7 +20,11 @@
   },
   "homepage": "https://github.com/sacumesh/twitter-clone-contract#readme",
   "devDependencies": {
-    "@nomicfoundation/hardhat-toolbox": "^2.0.0",
+    "@babel/eslint-parser": "^7.19.1",
+    "@nomicfoundation/hardhat-toolbox": "^1.0.2",
+    "eslint": "^8.27.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "hardhat": "^2.12.1",
     "prettier": "^2.7.1"
   }
