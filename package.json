@@ -1,0 +1,31 @@
+{
+  "name": "twitter-clone-contract",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx hardhat test",
+    "deploy": "npx hardhat run scripts/deploy.js",
+    "format": "npx prettier --write"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sacumesh/twitter-clone-contract.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sacumesh/twitter-clone-contract/issues"
+  },
+  "homepage": "https://github.com/sacumesh/twitter-clone-contract#readme",
+  "devDependencies": {
+    "@babel/eslint-parser": "^7.19.1",
+    "@nomicfoundation/hardhat-toolbox": "^1.0.2",
+    "eslint": "^8.27.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "hardhat": "^2.12.1",
+    "prettier": "^2.7.1"
+  }
+}
