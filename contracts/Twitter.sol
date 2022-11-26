@@ -2,14 +2,13 @@
 pragma solidity >=0.8.0 <0.9.0;
 
 // Uncomment this line to use console.log
-import "hardhat/console.sol";
+// import "hardhat/console.sol";
 
 contract Twitter {
-  /*@title A simulator for trees
-   *@authors Larry A. Gardner
-   *@notice You can use this contract for only the most basic simulation
-   *@dev All function calls are currently implemented without side effects
-   *@custom:experimental This is an experimental contract.
+  /*
+   * @title Decentretized Twitter Clone
+   * @authors Epita
+   * @notice You can use this contract for only the most basic CRUD operations
    */
 
   enum TweetStatus {
@@ -28,7 +27,7 @@ contract Twitter {
 
   uint256 public tweetCount;
 
-  mapping(uint256 => Tweet) public tweets;
+  mapping(uint256 => Tweet) private tweets;
 
   constructor() {}
 
@@ -55,7 +54,7 @@ contract Twitter {
   function updateTweet(
     uint256 _id,
     string memory _content
-  ) external isNotEmpty(_content) isValid(_id) isAuthor(_id) {
+  ) external isNotEmpty(_content) isValid(_id) isAuthor(_id) isNotDeleted(_id) {
     Tweet storage tweet = tweets[_id];
     tweet.content = _content;
     tweet.status = TweetStatus.UPDATED;
@@ -66,10 +65,22 @@ contract Twitter {
    * @dev A function that marks a tweet with given id DELETED
    * @param _id The id of the tweet
    */
-  function deleteTweet(uint256 _id) external isValid(_id) isAuthor(_id) {
+  function deleteTweet(
+    uint256 _id
+  ) external isValid(_id) isAuthor(_id) isNotDeleted(_id) {
     Tweet storage tweet = tweets[_id];
     tweet.status = TweetStatus.DELETED;
     tweet.timestamp = block.timestamp;
+  }
+
+  /*
+   * @dev A function that returns a tweet with a given id
+   * @param _id The id of the tweet
+   */
+  function getTweet(
+    uint256 _id
+  ) external view isValid(_id) isNotDeleted(_id) returns (Tweet memory) {
+    return tweets[_id];
   }
 
   /*
@@ -94,18 +105,17 @@ contract Twitter {
     return _results;
   }
 
-  /* @dev A modifier that checks if the caller is the author of the tweet
+  /*
+   * @dev A modifier that checks if the caller is the author of the tweet
    * @param _content The Author of the tweet
    */
   modifier isAuthor(uint256 _id) {
-    require(
-      tweets[_id].author == msg.sender,
-      "You are not the author of this tweet"
-    );
+    require(tweets[_id].author == msg.sender, "Not authorized");
     _;
   }
 
-  /* @dev A modifier that checks if the content is not not empty
+  /*
+   * @dev A modifier that checks if the content is not not empty
    * @param _content The content of the tweet
    */
   modifier isNotEmpty(string memory _content) {
@@ -113,15 +123,21 @@ contract Twitter {
     _;
   }
 
-  /* @dev A modifier that checks if the tweet id is valid
+  /*
+   * @dev A modifier that checks if the tweet id is valid
    * @param _id The id of the tweet
    */
   modifier isValid(uint256 _id) {
-    require(
-      ((0 < _id && _id <= tweetCount) ||
-        tweets[_id].status != TweetStatus.DELETED),
-      "Invalid tweet id"
-    );
+    require((0 < _id && _id <= tweetCount), "Tweet not found");
+    _;
+  }
+
+  /*
+   * @dev A modifier that checks if the tweet is not DELETED
+   * @param _id The id of the tweet
+   */
+  modifier isNotDeleted(uint256 _id) {
+    require(tweets[_id].status != TweetStatus.DELETED, "Tweet deleted");
     _;
   }
 }
