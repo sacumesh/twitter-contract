@@ -52,10 +52,12 @@ contract Twitter {
    * @param _id The id of the tweet
    * @param _content The new content of the tweet
    */
-  function updateTweet(
-    uint256 _id,
-    string memory _content
-  ) external isNotEmpty(_content) isValid(_id) isAuthor(_id) {
+  function updateTweet(uint256 _id, string memory _content)
+    external
+    isNotEmpty(_content)
+    isValid(_id)
+    isAuthor(_id)
+  {
     Tweet storage tweet = tweets[_id];
     tweet.content = _content;
     tweet.status = TweetStatus.UPDATED;
@@ -66,7 +68,12 @@ contract Twitter {
    * @dev A function that marks a tweet with given id DELETED
    * @param _id The id of the tweet
    */
-  function deleteTweet(uint256 _id) external isValid(_id) isAuthor(_id) {}
+  function deleteTweet(uint256 _id) external isValid(_id) isAuthor(_id) {
+    Tweet storage tweet = tweets[_id];
+    tweet.content = _content;
+    tweet.status = TweetStatus.UPDATED;
+    tweet.timestamp = block.timestamp;
+  }
 
   /*
    * @dev A function that returns the tweets in the tweets mapping
