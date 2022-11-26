@@ -55,7 +55,12 @@ contract Twitter {
   function updateTweet(
     uint256 _id,
     string memory _content
-  ) external isNotEmpty(_content) isValid(_id) isAuthor(_id) {}
+  ) external isNotEmpty(_content) isValid(_id) isAuthor(_id) {
+    Tweet storage tweet = tweets[_id];
+    tweet.content = _content;
+    tweet.status = TweetStatus.UPDATED;
+    tweet.timestamp = block.timestamp;
+  }
 
   /*
    * @dev A function that marks a tweet with given id DELETED
