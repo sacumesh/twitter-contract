@@ -52,12 +52,10 @@ contract Twitter {
    * @param _id The id of the tweet
    * @param _content The new content of the tweet
    */
-  function updateTweet(uint256 _id, string memory _content)
-    external
-    isNotEmpty(_content)
-    isValid(_id)
-    isAuthor(_id)
-  {
+  function updateTweet(
+    uint256 _id,
+    string memory _content
+  ) external isNotEmpty(_content) isValid(_id) isAuthor(_id) {
     Tweet storage tweet = tweets[_id];
     tweet.content = _content;
     tweet.status = TweetStatus.UPDATED;
@@ -70,8 +68,7 @@ contract Twitter {
    */
   function deleteTweet(uint256 _id) external isValid(_id) isAuthor(_id) {
     Tweet storage tweet = tweets[_id];
-    tweet.content = _content;
-    tweet.status = TweetStatus.UPDATED;
+    tweet.status = TweetStatus.DELETED;
     tweet.timestamp = block.timestamp;
   }
 
@@ -80,8 +77,7 @@ contract Twitter {
    * @param _id The id of the tweet
    * @return Returns only the tweets that are not DELETED
    */
-  function getTweets() external returns (Tweet[] memory) {
-    //Implementaion of gettweets()
+  function getTweets() external view returns (Tweet[] memory) {
     Tweet[] memory _tweets = new Tweet[](tweetCount);
     uint256 counter = 0;
     for (uint256 i = 0; i < tweetCount; i++) {
