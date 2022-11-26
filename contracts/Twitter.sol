@@ -36,19 +36,26 @@ contract Twitter {
    * @dev A function that will create a tweet from a given content and add it to the tweets mapping
    * @param _content The content of the tweet
    */
-  function createTweet(string memory _content) external isNotEmpty(_content) {}
+  function createTweet(string memory _content) external isNotEmpty(_content) {
+    tweetCount++;
+    tweets[tweetCount] = Tweet({
+      id: tweetCount,
+      author: msg.sender,
+      content: _content,
+      status: TweetStatus.CREATED,
+      timestamp: block.timestamp
+    });
+  }
 
   /*
    * @dev A function that will update a tweet whos with a given content in the tweets mapping.
    * @param _id The id of the tweet
    * @param _content The new content of the tweet
    */
-  function updateTweet(uint256 _id, string memory _content)
-    external
-    isNotEmpty(_content)
-    isValid(_id)
-    isAuthor(_id)
-  {}
+  function updateTweet(
+    uint256 _id,
+    string memory _content
+  ) external isNotEmpty(_content) isValid(_id) isAuthor(_id) {}
 
   /*
    * @dev A function that marks a tweet with given id DELETED
