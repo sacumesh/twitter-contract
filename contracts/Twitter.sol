@@ -68,7 +68,23 @@ contract Twitter {
    * @param _id The id of the tweet
    * @return Returns only the tweets that are not DELETED
    */
-  function getTweets() external returns (Tweet[] memory) {}
+  function getTweets() external returns (Tweet[] memory) {
+    //Implementaion of gettweets()
+    Tweet[] memory _tweets = new Tweet[](tweetCount);
+    uint256 counter = 0;
+    for (uint256 i = 0; i < tweetCount; i++) {
+      if (tweets[i + 1].status != TweetStatus.DELETED) {
+        _tweets[counter] = tweets[i + 1];
+        counter++;
+      }
+    }
+
+    Tweet[] memory _results = new Tweet[](counter);
+    for (uint256 i = 0; i < counter; i++) {
+      _results[i] = _tweets[i];
+    }
+    return _results;
+  }
 
   /* @dev A modifier that checks if the caller is the author of the tweet
    * @param _content The Author of the tweet
