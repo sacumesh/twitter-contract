@@ -1,90 +1,276 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
 
-describe("Tiwtter", async () => {
+describe("Twitter", async () => {
   let twitter;
   let deployer, user1, user2, users;
-  const tweetContent = "tweet";
+  let TweetSatus = {
+    CREATED: 0,
+    UPDATED: 1,
+    DELETED: 2,
+  };
   beforeEach(async () => {
     //Get signers from development accounts
-    [deployer, user1, user2, users] = await ethers.getSigners();
+    [deployer, user1, user2, users] =
+      await ethers.getSigners();
     //Get the contract factory to deploy the contract
-    const twitterFactory = await ethers.getContractFactory("Twitter");
-    //Deploy contract
+    const twitterFactory =
+      await ethers.getContractFactory("Twitter");
+    //Contract deployment
     twitter = await twitterFactory.deploy();
   });
 
   describe("Deployment", async () => {
-    it("Tweet count should be 0", async () => {
-      expect(await twitter.tweetCount()).to.equal(0);
+    it("Should start with tweet count equal 0", async () => {
+      expect(await twitter.tweetCount()).to.equal(
+        0,
+      );
     });
-
-    const postCount = await decentratwitter.postCount();
-    expect(postCount).to.equal(1);
+    it("Should return empty tweets array at start", async () => {
+      expect(await twitter.getTweets()).to.be.an(
+        "array",
+      ).that.is.empty;
+    });
   });
 
-  describe("Create tweet", async () => {
-    it("Should allow user to create tweets", async () => {});
-    it("Should allow multiple users to create tweets", async () => {});
+  describe("Create tweet", async function () {
+    let author, id, content;
+    before(() => {
+      author = user1;
+      content = "hi";
+      id = 1;
+    });
+    it("Should allow user to create tweets", async () => {
+      await twitter
+        .connect(author)
+        .createTweet(content);
+      const tweet = await twitter.getTweet(id);
+      expect(tweet.id).to.equal(id);
+      expect(tweet.author).to.equal(
+        author.address,
+      );
+      expect(tweet.content).to.equal(content);
+      expect(tweet.status).to.equal(
+        TweetSatus.CREATED,
+      );
+    });
+    it("Should not allow user to create tweet if content is empty", async () => {
+      await expect(
+        twitter.connect(author).createTweet(""),
+      ).to.be.revertedWith(
+        "Tweet content is empty",
+      );
+    });
   });
 
-  describe("Delete tweet", async () => {
-    let tweetId;
-    let author;
+  describe("Get tweet", async () => {
+    let author, id, content, nonAuthorUser;
 
     beforeEach(async () => {
       author = user1;
-      await twitter.connect(author).createTweet(tweetContent);
-      tweetId = await twitter.tweetCount();
+      nonAuthorUser = user2;
+      content = "hi";
+      id = 1;
+      // author creates a tweet
+      await twitter
+        .connect(author)
+        .createTweet(content);
     });
 
-    it("Should allow the author", async () => {});
-
-    it("Should not delete invalid tweets", async () => {
-      await expect(twitter.connect(author).deleteTweet(10)).to.be.revertedWith(
-        "Tweet not found",
-      );
+    it("Should return the correct tweet", async () => {
+      const tweet = await twitter
+        .connect(author)
+        .getTweet(id);
+      expect(tweet.id).to.equal(id);
+      expect(tweet.content).to.equal(content);
     });
 
-    it("Should not allow other users to delete the tweet", async () => {
+    it("Should not return tweet if tweet is deleted", async () => {
+      await twitter
+        .connect(author)
+        .deleteTweet(id);
       await expect(
-        twitter.connect(user2).deleteTweet(tweetId),
-      ).to.be.revertedWith("Must be the author");
+        twitter.getTweet(1),
+      ).to.be.revertedWith("Tweet deleted");
+    });
+
+    it("Should not return tweet if tweet does not exist", async () => {
+      //Invalid id can be any id that is not a key in the tweets mapping
+      const invalId = 2;
+      await expect(
+        twitter.getTweet(invalId),
+      ).to.be.revertedWith("Tweet not found");
+    });
+  });
+
+  describe("Delete tweet", async () => {
+    let author, id, content, nonAuthor, invalId;
+
+    beforeEach(async () => {
+      author = user1;
+      nonAuthor = user2;
+      content = "hi";
+      id = 1;
+
+      // author creates a tweet
+      await twitter
+        .connect(author)
+        .createTweet(content);
+    });
+
+    it("Should allow author to delete tweet", async () => {
+      await twitter
+        .connect(author)
+        .deleteTweet(id);
+      await expect(
+        twitter.getTweet(id),
+      ).to.be.revertedWith("Tweet deleted");
+    });
+
+    it("Should not allow non-author to delete tweet", async () => {
+      await expect(
+        twitter
+          .connect(nonAuthor)
+          .deleteTweet(id),
+      ).to.be.revertedWith("Not authorized");
+    });
+
+    it("Should not allow to delete tweet if tweet does not exist", async () => {
+      //Invalid id can be any id that is not a key in the tweets mapping
+      const invalId = 2;
+      await expect(
+        twitter.deleteTweet(invalId),
+      ).to.be.revertedWith("Tweet not found");
     });
   });
 
   describe("Update tweet", async () => {
-    let tweetId;
-    let author;
-    let newTweetContent;
+    let author,
+      id,
+      content,
+      newContent,
+      nonAuthor;
 
     beforeEach(async () => {
       author = user1;
-      await twitter.connect(author).createTweet(tweetContent);
-      tweetId = await twitter.tweetCount();
+      nonAuthor = user2;
+      content = "hi";
+      newContent = "hello";
+      id = 1;
+      //author creates tweet
+      await twitter
+        .connect(author)
+        .createTweet(content);
     });
 
     it("Should allow the author to update tweet", async () => {
-      //user1 creates a tweet
-      await twitter.connect(author).updateTweet(tweetId, tweetContent);
-      const tweet = await twitter.tweets(tweetId);
-      expect(tweet.status).to.equal(1);
-    });
+      //author updates tweet with new content
+      await twitter
+        .connect(author)
+        .updateTweet(id, newContent);
 
-    it("Should not update invalid tweets", async () => {
-      await expect(twitter.connect(author).deleteTweet(10)).to.be.revertedWith(
-        "Tweet not found",
+      //author gets updated tweet
+      const tweet = await twitter.getTweet(id);
+      expect(tweet.status).to.equal(
+        TweetSatus.UPDATED,
+      );
+      expect(tweet.content).to.equal(newContent);
+      expect(tweet.id).to.equal(id);
+      expect(tweet.author).to.equal(
+        author.address,
       );
     });
 
-    it("Should noth allow other users to update tweets", async () => {
+    it("Should not allow non-author to update tweet", async () => {
       await expect(
-        twitter.connect(user2).updateTweet(tweetId, tweetContent),
-      ).to.be.revertedWith("Must be the author");
+        twitter
+          .connect(nonAuthor)
+          .updateTweet(id, newContent),
+      ).to.be.revertedWith("Not authorized");
+    });
+
+    it("Should not allow author to update tweet if content is empty", async () => {
+      await expect(
+        twitter
+          .connect(author)
+          .updateTweet(id, ""),
+      ).to.be.revertedWith(
+        "Tweet content is empty",
+      );
+    });
+
+    it("Should not allow to update tweet if tweet is deleted", async () => {
+      //author deletes tweet
+      await twitter
+        .connect(author)
+        .deleteTweet(id);
+
+      await expect(
+        twitter
+          .connect(author)
+          .updateTweet(id, newContent),
+      ).to.be.revertedWith("Tweet deleted");
+    });
+
+    it("Should not allow to update tweet if tweet does not exist", async () => {
+      //Invalid id can be any id that is not a key in the tweets mapping
+      const invalId = 2;
+      await expect(
+        twitter
+          .connect(author)
+          .updateTweet(invalId, newContent),
+      ).to.be.revertedWith("Tweet not found");
     });
   });
+  describe("Get tweets", async () => {
+    let author1, content1, id1;
+    let author2, content2, id2;
 
-  describe("Getter functions", async () => {
-    it("getTweets should fetch all undeleted the posts", async function () {});
+    beforeEach(async () => {
+      author1 = user1;
+      author2 = user2;
+      content1 = "hi";
+      content2 = "hello";
+      id1 = 1;
+      id2 = 2;
+      //author 1 creates tweet
+      await twitter
+        .connect(author1)
+        .createTweet(content1);
+      //author 2 creates tweet
+      await twitter
+        .connect(author2)
+        .createTweet(content2);
+    });
+    it("Should return the correct tweets", async () => {
+      //any user can fetch tweets
+      const tweets = await twitter.getTweets();
+      expect(tweets)
+        .to.be.an("array")
+        .that.has.length(2);
+      expect(tweets[0].id).to.equal(id1);
+      expect(tweets[0].content).to.equal(
+        content1,
+      );
+      expect(tweets[1].id).to.equal(id2);
+      expect(tweets[1].content).to.equal(
+        content2,
+      );
+    });
+    it("Should return only undeleted tweets", async () => {
+      //author 1 deletes tweet
+      await twitter
+        .connect(author1)
+        .deleteTweet(id1);
+      //any user can fetch tweets
+      const tweets = await twitter.getTweets();
+      expect(tweets)
+        .to.be.an("array")
+        .that.has.length(1);
+      expect(tweets[0].id).to.equal(id2);
+      expect(tweets[0].content).to.equal(
+        content2,
+      );
+    });
   });
 });
