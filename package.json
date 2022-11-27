@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "npx hardhat test",
-    "deploy": "npx hardhat run scripts/deploy.js",
+    "deploy": "node scripts/main.js",
     "format": "npx prettier --write"
   },
   "repository": {
@@ -22,6 +22,8 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",
     "@nomicfoundation/hardhat-toolbox": "^1.0.2",
+    "cli-select": "^1.1.2",
+    "cli-spinner": "^0.2.10",
     "dotenv": "^16.0.3",
     "eslint": "^8.27.0",
     "eslint-config-prettier": "^8.5.0",
