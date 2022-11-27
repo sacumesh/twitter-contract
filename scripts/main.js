@@ -8,11 +8,12 @@ async function main() {
   // get the network names from the hardhat.config.js file
   const networkNames = Object.keys(hardhatConfig.networks);
   // get the network name from the user
+  console.log(chalk.blue("Select a network to deploy to:"));
   const network = await cliSelect({
     values: networkNames,
     valueRenderer: (value, selected) => {
       if (selected) {
-        return chalk.underline(value);
+        return chalk.underline(chalk.green(value));
       }
 
       return value;

@@ -7,14 +7,19 @@ async function main() {
   spinner.setSpinnerString("|/-\\");
   // start the spinner
   spinner.start();
+  try {
+    const Twitter = await hre.ethers.getContractFactory("Twitter");
+    const twitter = await Twitter.deploy();
+    await twitter.deployed();
+    // stop the spinner and clear the cli
 
-  const Twitter = await hre.ethers.getContractFactory("Twitter");
-  const twitter = await Twitter.deploy();
-  await twitter.deployed();
-  // stop the spinner and clear the cli
-  spinner.stop(true);
-  // print the address of the deployed contract
-  console.log("Contract deployed to:", twitter.address);
+    // print the address of the deployed contract
+    spinner.stop(true);
+    console.log("Contract deployed to:", twitter.address);
+  } catch (error) {
+    spinner.stop(true);
+    throw error;
+  }
 }
 
 main().catch((error) => {
