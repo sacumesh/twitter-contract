@@ -22,14 +22,13 @@
   "devDependencies": {
     "@babel/eslint-parser": "^7.19.1",
     "@nomicfoundation/hardhat-toolbox": "^1.0.2",
+    "cli-select": "^1.1.2",
+    "cli-spinner": "^0.2.10",
     "dotenv": "^16.0.3",
     "eslint": "^8.27.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
     "hardhat": "^2.12.1",
     "prettier": "^2.7.1"
-  },
-  "dependencies": {
-    "cli-select": "^1.1.2"
   }
 }
