@@ -1,19 +1,25 @@
 {
   "name": "twitter-clone-contract",
   "version": "1.0.0",
-  "description": "",
+  "description": "A Solidity contract for a Twitter clone",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "npx hardhat test",
-    "deploy": "node scripts/main.js",
-    "format": "npx prettier --write"
+    "compile": "npx hardhat compile",
+    "deploy": "npx hardhat run scripts/deploy.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sacumesh/twitter-clone-contract.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "Epita",
+    "Twitter",
+    "Dapp",
+    "Solidity"
+  ],
+  "author": "Sachiththa Bandaranayake, Kamran Ismayilzada, Rene Adriele Acosta, Tomas Tello Loli, Abdallah AHMED HAMDAN AHMED",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/sacumesh/twitter-clone-contract/issues"
@@ -28,6 +34,7 @@
     "eslint": "^8.27.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-unused-imports": "^2.0.0",
     "hardhat": "^2.12.1",
     "prettier": "^2.7.1"
   }

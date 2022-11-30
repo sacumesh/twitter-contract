@@ -2,14 +2,12 @@ const chai = require("chai");
 const { ethers } = require("hardhat");
 const { expect } = chai;
 
-// https://www.chaijs.com/plugins/chai-bn/
-
 describe("Twitter", async () => {
   let twitter;
-  let deployer, user1, user2, users;
+  let user1, user2;
   beforeEach(async () => {
     //Get signers from development accounts
-    [deployer, user1, user2, users] = await ethers.getSigners();
+    [user1, user2] = await ethers.getSigners();
     //Get the contract factory to deploy the contract
     const twitterFactory = await ethers.getContractFactory("Twitter");
     //Contract deployment
@@ -61,11 +59,10 @@ describe("Twitter", async () => {
   });
 
   describe("Get tweet", async () => {
-    let author, id, content, nonAuthorUser;
+    let author, id, content;
 
     beforeEach(async () => {
       author = user1;
-      nonAuthorUser = user2;
       content = "hi";
       id = 1;
       // author creates a tweet
@@ -93,7 +90,7 @@ describe("Twitter", async () => {
   });
 
   describe("Delete tweet", async () => {
-    let author, id, content, nonAuthor, invalId;
+    let author, id, content, nonAuthor;
 
     beforeEach(async () => {
       author = user1;

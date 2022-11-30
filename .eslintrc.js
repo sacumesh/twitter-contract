@@ -1,7 +1,7 @@
 module.exports = {
   root: true,
   parser: "@babel/eslint-parser",
-  plugins: ["prettier"],
+  plugins: ["prettier", "unused-imports"],
   extends: ["eslint:recommended", "plugin:prettier/recommended"],
   parserOptions: {
     ecmaVersion: 2017,
@@ -9,7 +9,9 @@ module.exports = {
   },
   env: {
     node: true,
-    jest: true,
-    ethers: true,
+    mocha: true,
+  },
+  rules: {
+    "unused-imports/no-unused-imports": "error",
   },
 };
