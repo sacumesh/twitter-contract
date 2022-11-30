@@ -1,7 +1,7 @@
 const hre = require("hardhat");
 const cliSelect = require("cli-select");
 const chalk = require("chalk");
-const hardhatConfig = require("../hardhat.config");
+const hardhatConfig = require("./hardhat.config");
 const DEPLOY_SCRIPT_PATH = "./scripts/deploy.js";
 
 async function main() {

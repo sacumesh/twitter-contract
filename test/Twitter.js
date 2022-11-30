@@ -2,8 +2,6 @@ const chai = require("chai");
 const { ethers } = require("hardhat");
 const { expect } = chai;
 
-// https://www.chaijs.com/plugins/chai-bn/
-
 describe("Twitter", async () => {
   let twitter;
   let user1, user2;

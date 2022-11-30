@@ -4,16 +4,22 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "npx hardhat test",
-    "deploy": "node scripts/main.js",
+    "deploy": "npx hardhat run scripts/deploy.js",
     "format": "npx prettier --write"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sacumesh/twitter-clone-contract.git"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "Epita",
+    "Twitter",
+    "Dapp",
+    "Solidity"
+  ],
+  "author": "Sachiththa Bandaranayake, Kamran Ismayilzada, Rene Adriele Acosta, Tomas Tello Loli, Abdallah AHMED HAMDAN AHMED",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/sacumesh/twitter-clone-contract/issues"
