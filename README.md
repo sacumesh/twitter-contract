@@ -2,7 +2,7 @@
 
 This repository aims to create smart contract for a twitter clone using Solidity and Hardhat. The contract supports basic create, update, delete and read CRUD operations.
 
-One smart contract deployed address on goerli: `0xea8e8248C30F7cCd6BfC971319fb9339544A0104`
+One smart contract deployed address on goerli: `0xDEb71e8D8D816844b67F658306B94CbdDEe70d7E`
 
 Front-end intergration repository: [https://github.com/sacumesh/twitter-fron](https://github.com/sacumesh/twitter-front)
 
@@ -80,16 +80,16 @@ Select a network to deploy to:
 
 ### _Method 2_
 
-To deploy to a network entry defined in your `hardhat.config.js,` run the `npm run deploy` with option `--network` followed by the the network name to speficy the network to deploy to
+To deploy to a network entry defined in your `hardhat.config.js,` run the `npm run deploy --` with option `--network` followed by the the network name to speficy the network to deploy to
 
 ```shell
- npm run deploy --network goerli
+ npm run deploy -- --network goerli
 ```
 
 If everything went well, you should see the deployed contract address.
 
 ```bash
-Contract deployed to: 0xea8e8248C30F7cCd6BfC971319fb9339544A0104
+Contract deployed to: 0xDEb71e8D8D816844b67F658306B94CbdDEe70d7E
 ```
 
 ## **Testing the contract**

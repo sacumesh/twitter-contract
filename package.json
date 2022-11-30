@@ -1,13 +1,13 @@
 {
   "name": "twitter-clone-contract",
   "version": "1.0.0",
-  "description": "",
+  "description": "A Solidity contract for a Twitter clone",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
     "test": "npx hardhat test",
-    "deploy": "npx hardhat run scripts/deploy.js",
-    "format": "npx prettier --write"
+    "compile": "npx hardhat compile",
+    "deploy": "npx hardhat run scripts/deploy.js"
   },
   "repository": {
     "type": "git",
