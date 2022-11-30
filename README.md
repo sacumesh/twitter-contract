@@ -4,7 +4,7 @@ This repository aims to create smart contract for a twitter clone using Solidity
 
 One smart contract deployed address on goerli: `0xDEb71e8D8D816844b67F658306B94CbdDEe70d7E`
 
-Front-end intergration repository: [https://github.com/sacumesh/twitter-fron](https://github.com/sacumesh/twitter-front)
+Front-end intergration repository: [https://github.com/sacumesh/twitter-front](https://github.com/sacumesh/twitter-front)
 
 ## **Setup**
 
