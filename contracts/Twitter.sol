@@ -11,18 +11,24 @@ contract Twitter {
    * @notice You can use this contract for only the most basic CRUD operations
    */
 
-  enum TweetStatus {
-    CREATED,
-    UPDATED,
-    DELETED
-  }
-
+  // tweet schema data store
   struct Tweet {
     uint256 id;
     address author;
     string content;
-    TweetStatus status;
-    uint256 timestamp;
+    uint256 createdAt;
+    uint256 updatedAt;
+    uint256 deletedAt;
+    bool isDeleted;
+  }
+
+  // tweet response
+  struct TweetResponse {
+    uint256 id;
+    address author;
+    string content;
+    uint256 createdAt;
+    uint256 updatedAt;
   }
 
   uint256 public tweetCount;
@@ -35,14 +41,18 @@ contract Twitter {
    * @dev A function that will create a tweet from a given content and add it to the tweets mapping
    * @param _content The content of the tweet
    */
-  function createTweet(string memory _content) external isNotEmpty(_content) {
+  function createTweet(
+    string memory _content
+  ) external isNotEmpty(_content) isNotLongerThan280(_content) {
     tweetCount++;
     tweets[tweetCount] = Tweet({
       id: tweetCount,
       author: msg.sender,
       content: _content,
-      status: TweetStatus.CREATED,
-      timestamp: block.timestamp
+      createdAt: block.timestamp,
+      updatedAt: 0,
+      deletedAt: 0,
+      isDeleted: false
     });
   }
 
@@ -54,11 +64,17 @@ contract Twitter {
   function updateTweet(
     uint256 _id,
     string memory _content
-  ) external isNotEmpty(_content) isValid(_id) isAuthor(_id) isNotDeleted(_id) {
+  )
+    external
+    isNotEmpty(_content)
+    isValid(_id)
+    isAuthor(_id)
+    isNotDeleted(_id)
+    isNotLongerThan280(_content)
+  {
     Tweet storage tweet = tweets[_id];
     tweet.content = _content;
-    tweet.status = TweetStatus.UPDATED;
-    tweet.timestamp = block.timestamp;
+    tweet.updatedAt = block.timestamp;
   }
 
   /*
@@ -69,38 +85,60 @@ contract Twitter {
     uint256 _id
   ) external isValid(_id) isAuthor(_id) isNotDeleted(_id) {
     Tweet storage tweet = tweets[_id];
-    tweet.status = TweetStatus.DELETED;
-    tweet.timestamp = block.timestamp;
+    tweet.isDeleted = true;
+    tweet.deletedAt = block.timestamp;
   }
 
   /*
-   * @dev A function that returns a tweet with a given id
+   * @dev A function that returns a tweet with a given id. Main purpose is to unit test the contract
    * @param _id The id of the tweet
+   * @return TweetResponse matching the given id
    */
   function getTweet(
     uint256 _id
-  ) external view isValid(_id) isNotDeleted(_id) returns (Tweet memory) {
-    return tweets[_id];
+  )
+    external
+    view
+    isValid(_id)
+    isNotDeleted(_id)
+    returns (TweetResponse memory)
+  {
+    Tweet memory _tweet = tweets[_id];
+    TweetResponse memory _tweetResponse = TweetResponse({
+      id: _tweet.id,
+      author: _tweet.author,
+      content: _tweet.content,
+      createdAt: _tweet.createdAt,
+      updatedAt: _tweet.updatedAt
+    });
+    return _tweetResponse;
   }
 
   /*
    * @dev A function that returns the tweets in the tweets mapping
    * @param _id The id of the tweet
-   * @return Returns only the tweets that are not DELETED
+   * @return Returns only the tweets that are not deleted
    */
-  function getTweets() external view returns (Tweet[] memory) {
+  function getTweets() external view returns (TweetResponse[] memory) {
     Tweet[] memory _tweets = new Tweet[](tweetCount);
     uint256 counter = 0;
     for (uint256 i = 0; i < tweetCount; i++) {
-      if (tweets[i + 1].status != TweetStatus.DELETED) {
+      if (tweets[i + 1].isDeleted == false) {
         _tweets[counter] = tweets[i + 1];
         counter++;
       }
     }
 
-    Tweet[] memory _results = new Tweet[](counter);
+    TweetResponse[] memory _results = new TweetResponse[](counter);
     for (uint256 i = 0; i < counter; i++) {
-      _results[i] = _tweets[i];
+      Tweet memory _tweet = _tweets[counter - 1 - i];
+      _results[i] = TweetResponse({
+        id: _tweet.id,
+        author: _tweet.author,
+        content: _tweet.content,
+        createdAt: _tweet.createdAt,
+        updatedAt: _tweet.updatedAt
+      });
     }
     return _results;
   }
@@ -124,6 +162,15 @@ contract Twitter {
   }
 
   /*
+   * @dev A modifier that checks if the tweet content is not longer than 280 characters
+   * @param _id The id of the tweet
+   */
+  modifier isNotLongerThan280(string memory _content) {
+    require(bytes(_content).length <= 280, "Tweet content is too long");
+    _;
+  }
+
+  /*
    * @dev A modifier that checks if the tweet id is valid
    * @param _id The id of the tweet
    */
@@ -133,11 +180,11 @@ contract Twitter {
   }
 
   /*
-   * @dev A modifier that checks if the tweet is not DELETED
+   * @dev A modifier that checks if the tweet is not deleted
    * @param _id The id of the tweet
    */
   modifier isNotDeleted(uint256 _id) {
-    require(tweets[_id].status != TweetStatus.DELETED, "Tweet deleted");
+    require(tweets[_id].isDeleted == false, "Tweet deleted");
     _;
   }
 }
